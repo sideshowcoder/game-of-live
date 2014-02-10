@@ -29,35 +29,24 @@ Cell.prototype.applyRules = function () {
 }
 
 describe("Game of Life", function () {
-  describe("Cell", function () {
+  describe("Cell rules", function () {
     var cell
 
     beforeEach(function () {
       cell = new Cell()
     })
 
-    it("is dead when new", function () {
-      cell.isAlive().should.not.be.true
-    })
-
-    it("is alive after being revived", function () {
+    it("dies with less then 2 living neighbors if alive", function () {
       cell.revive()
-      cell.isAlive().should.be.true
+      cell.neighbours = 1
+      cell.applyRules()
+      cell.isAlive().should.be.not.be.true
     })
 
-    describe("Rules", function () {
-      it("dies with less then 2 living neighbors if alive", function () {
-        cell.revive()
-        cell.neighbours = 1
-        cell.applyRules()
-        cell.isAlive().should.be.not.be.true
-      })
-
-      it("is revived with exactly 3 living neighbours if dead", function () {
-        cell.neighbours = 3
-        cell.applyRules()
-        cell.isAlive().should.be.be.true
-      })
+    it("is revived with exactly 3 living neighbours if dead", function () {
+      cell.neighbours = 3
+      cell.applyRules()
+      cell.isAlive().should.be.be.true
     })
   })
 })
