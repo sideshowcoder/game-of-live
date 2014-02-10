@@ -21,13 +21,9 @@ function Cell() {
 }
 
 Cell.prototype.applyRules = function () {
-  if (this.neighbours < 2) {
-    this.die()
-  } else if (this.neighbours === 3) {
-    this.revive()
-  } else if (this.neighbours > 3) {
-    this.die()
-  }
+  if (this.neighbours < 2) return this.die()
+  if (this.neighbours === 3) return this.revive()
+  if (this.neighbours > 3) return this.die()
 }
 
 describe("Game of Life", function () {
