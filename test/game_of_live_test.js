@@ -131,20 +131,6 @@ describe("Game of Life", function () {
   })
 
   describe("Board", function () {
-    it("is filled with dead cell at start", function () {
-      var board = new Board(3, 3)
-      board.at(0, 0).isAlive().should.not.be.true
-    })
-
-    it("assigns living neighbours", function () {
-      var board = new Board(3, 3)
-      board.at(0, 0).revive()
-      board.assignNeighbourCount()
-      board.at(0, 0).neighbours.should.be.equal(0)
-      board.at(1, 1).neighbours.should.be.equal(1)
-      board.at(2, 2).neighbours.should.be.equal(1)
-    })
-
     it("applies next step", function () {
       var board = new Board(3, 3)
       board.at(0, 0).revive()
