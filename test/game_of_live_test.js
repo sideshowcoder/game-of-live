@@ -70,6 +70,12 @@ function Board(numRows, numColumns) {
     })
   }
 
+  this.applyRules = function () {
+    allCells.forEach(function (cell) {
+      cell.applyRules()
+    })
+  }
+
   function neighbourCellsFor(cell) {
     var maxRowIndex = numRows - 1
     var maxColumnIndex = numColumns - 1
@@ -81,6 +87,11 @@ function Board(numRows, numColumns) {
       return neighbourCells
     }, [])
   }
+}
+
+Board.prototype.step = function () {
+  this.assignNeighbourCount()
+  this.applyRules()
 }
 
 Board.RELATIVE_NEIGHBOURS = [
@@ -132,6 +143,17 @@ describe("Game of Life", function () {
       board.at(0, 0).neighbours.should.be.equal(0)
       board.at(1, 1).neighbours.should.be.equal(1)
       board.at(2, 2).neighbours.should.be.equal(1)
+    })
+
+    it("applies next step", function () {
+      var board = new Board(3, 3)
+      board.at(0, 0).revive()
+      board.at(1, 1).revive()
+      board.at(1, 2).revive()
+      board.step()
+      board.at(0, 0).isAlive().should.be.true
+      board.at(1, 1).isAlive().should.be.true
+      board.at(2, 2).isAlive().should.be.true
     })
   })
 })
