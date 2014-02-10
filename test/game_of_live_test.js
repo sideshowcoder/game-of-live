@@ -25,6 +25,8 @@ Cell.prototype.applyRules = function () {
     this.die()
   } else if (this.neighbours === 3) {
     this.revive()
+  } else if (this.neighbours > 3) {
+    this.die()
   }
 }
 
@@ -36,17 +38,24 @@ describe("Game of Life", function () {
       cell = new Cell()
     })
 
-    it("dies with less then 2 living neighbors if alive", function () {
+    it("dies with less then 2 living neighbors", function () {
       cell.revive()
       cell.neighbours = 1
       cell.applyRules()
       cell.isAlive().should.be.not.be.true
     })
 
-    it("is revived with exactly 3 living neighbours if dead", function () {
+    it("is revived with exactly 3 living neighbours", function () {
       cell.neighbours = 3
       cell.applyRules()
-      cell.isAlive().should.be.be.true
+      cell.isAlive().should.be.true
+    })
+
+    it("dies with more than 3 living neighbours", function () {
+      cell.revive()
+      cell.neighbours = 4
+      cell.applyRules()
+      cell.isAlive().should.not.be.true
     })
   })
 })
