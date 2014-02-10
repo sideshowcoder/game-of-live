@@ -26,6 +26,26 @@ Cell.prototype.applyRules = function () {
   if (this.neighbours > 3) return this.die()
 }
 
+function Board(numRows, numColumns) {
+  var rows = []
+
+  function createRow() {
+    var row = []
+    for (var i = 0; i < numColumns; i++) {
+      row.push(new Cell())
+    }
+    return row
+  }
+
+  for (var i = 0; i < numRows; i++) {
+    rows.push(createRow())
+  }
+
+  this.at = function (x, y) {
+    return rows[x][y]
+  }
+}
+
 describe("Game of Life", function () {
   describe("Cell rules", function () {
     var cell
@@ -52,6 +72,13 @@ describe("Game of Life", function () {
       cell.neighbours = 4
       cell.applyRules()
       cell.isAlive().should.not.be.true
+    })
+  })
+
+  describe("Board", function () {
+    it("is filled with dead cell at start", function () {
+      var board = new Board(3, 3)
+      board.at(0, 0).isAlive().should.not.be.true
     })
   })
 })
