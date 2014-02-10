@@ -20,6 +20,13 @@ function Cell(x, y) {
     alive = false
   }
 
+  this.toString = function () {
+    if (alive)
+      return "*"
+    else
+      return "."
+  }
+
 }
 
 Cell.prototype.applyRules = function () {
@@ -41,6 +48,17 @@ function overflowPosition(value, max) {
 function Board(numRows, numColumns) {
   var rows = []
   var that = this
+  var iteration = 1
+
+  this.print = function () {
+    console.log("Current Iteration: ", iteration++)
+    rows.forEach(function (row) {
+      var str = row.reduce(function (str, cell) {
+        return str += cell
+      }, "")
+      console.log(str)
+    })
+  }
 
   function createRow(x) {
     var row = []
@@ -143,4 +161,14 @@ describe("Game of Life", function () {
     })
   })
 })
+
+
+var board = new Board(5, 5)
+board.at(1, 0).revive()
+board.at(1, 1).revive()
+board.at(1, 2).revive()
+for (var i = 0; i < 10; i++) {
+  board.print()
+  board.step()
+}
 
