@@ -18,13 +18,17 @@ function Cell() {
 
 describe("Game of Life", function () {
   describe("Cell", function () {
+    var cell
+
+    beforeEach(function () {
+      cell = new Cell()
+    })
+
     it("is dead when new", function () {
-      var cell = new Cell()
       cell.isAlive().should.not.be.true
     })
 
     it("is alive after being revived", function () {
-      var cell = new Cell()
       cell.revive()
       cell.isAlive().should.be.true
     })
