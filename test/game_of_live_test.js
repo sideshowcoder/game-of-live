@@ -2,7 +2,9 @@
 
 var should = require('should')
 
-function Cell() {
+function Cell(x, y) {
+  this.x = x
+  this.y = y
 
   var alive = false
 
@@ -26,63 +28,66 @@ Cell.prototype.applyRules = function () {
   if (this.neighbours > 3) return this.die()
 }
 
+function overflowPosition(value, max) {
+  if (value > max) {
+    return 0
+  } else if (value < 0) {
+    return max
+  } else {
+    return value
+  }
+}
+
 function Board(numRows, numColumns) {
   var rows = []
   var that = this
-  var maxRowIndex = numRows - 1
-  var maxColumnIndex = numColumns - 1
 
-  function createRow() {
+  function createRow(x) {
     var row = []
-    for (var i = 0; i < numColumns; i++) {
-      row.push(new Cell())
+    for (var y = 0; y < numColumns; y++) {
+      row.push(new Cell(x, y))
     }
     return row
   }
 
-  for (var i = 0; i < numRows; i++) {
-    rows.push(createRow())
+  for (var x = 0; x < numRows; x++) {
+    rows.push(createRow(x))
   }
 
   this.at = function (x, y) {
     return rows[x][y]
   }
 
+  var allCells = []
+  allCells = [].concat.apply(allCells, rows);
+
   this.assignNeighbourCount = function () {
-    rows.forEach(function (row, x) {
-      row.forEach(function (cell, y) {
-        var neighbourCells = neighbourCellsFor(x, y)
-        cell.neighbours = neighbourCells.reduce(function (acc, cell) {
-          if (cell.isAlive()) acc++
-          return acc
-        }, 0)
-      })
+    allCells.forEach(function (cell) {
+      cell.neighbours = neighbourCellsFor(cell).reduce(function (acc, cell) {
+        if (cell.isAlive()) acc++
+        return acc
+      }, 0)
     })
   }
 
-  function neighbourCellsFor(x, y) {
-    var positionMap = [[-1, -1], [0, -1], [1, -1],
-                       [-1, 0],           [1, 0],
-                       [-1, 1],  [0, 1],  [1, 1]]
-    var neighbourCells = []
-    positionMap.forEach(function (posDelta) {
-      var dx = x + posDelta[0]
-      if (dx > maxRowIndex) {
-        dx = 0
-      } else if (dx < 0) {
-        dx = maxRowIndex
-      }
-      var dy = y + posDelta[1]
-      if (dy > maxColumnIndex) {
-        dy = 0
-      } else if (dy < 0) {
-        dy = maxColumnIndex
-      }
+  function neighbourCellsFor(cell) {
+    var maxRowIndex = numRows - 1
+    var maxColumnIndex = numColumns - 1
+
+    return Board.RELATIVE_NEIGHBOURS.reduce(function (neighbourCells, position) {
+      var dx = overflowPosition(cell.x + position.x, maxRowIndex)
+      var dy = overflowPosition(cell.y + position.y, maxColumnIndex)
       neighbourCells.push(that.at(dx, dy))
-    })
-    return neighbourCells
+      return neighbourCells
+    }, [])
   }
 }
+
+Board.RELATIVE_NEIGHBOURS = [
+  {x: -1, y: -1}, {x: -1, y: 0}, {x: -1, y: 1},
+  {x: 0, y: -1},                 {x: 0, y: 1},
+  {x: 1, y: -1},  {x: 1, y: 0},  {x: 1, y: 1}
+]
 
 
 describe("Game of Life", function () {
