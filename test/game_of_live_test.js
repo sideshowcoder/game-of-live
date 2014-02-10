@@ -14,6 +14,16 @@ function Cell() {
     alive = true
   }
 
+  this.die = function () {
+    alive = false
+  }
+
+}
+
+Cell.prototype.applyRules = function () {
+  if (this.neighbours < 2) {
+    this.die()
+  }
 }
 
 describe("Game of Life", function () {
@@ -31,6 +41,15 @@ describe("Game of Life", function () {
     it("is alive after being revived", function () {
       cell.revive()
       cell.isAlive().should.be.true
+    })
+
+    describe("Rules", function () {
+      it("dies with less then 2 living neighbors if alive", function () {
+        cell.revive()
+        cell.neighbours = 1
+        cell.applyRules()
+        cell.isAlive().should.be.not.be.true
+      })
     })
   })
 })
